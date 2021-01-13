@@ -1,0 +1,36 @@
+<!-- Polymer Polyfill Libraries -->
+<script src="http://api.jscut.org/bower_components/platform/platform.js"></script>
+
+<!-- Polymer Components -->
+<link rel="import" href="http://api.jscut.org/bower_components/core-localstorage/core-localstorage.html">
+<link rel="import" href="http://api.jscut.org/bower_components/paper-slider/paper-slider.html">
+
+<!-- jscut Components -->
+<link rel="import" href="http://api.jscut.org/api/jscut-simulate-gcode.html">
+
+<!-- Page Content -->
+<template id="top" is="auto-binding">
+    <!-- Bind parameters to local storage -->
+    <core-localstorage name="test-cutterDiameter" value="{{cutterDiameter}}"></core-localstorage>
+    <core-localstorage name="test-cutterHeight" value="{{cutterHeight}}"></core-localstorage>
+    <core-localstorage name="test-gcode" value="{{gcode}}"></core-localstorage>
+
+    <!-- gcode simulator -->
+    <jscut-simulate-gcode
+        width="400"
+        height="400"
+        gcode="{{gcode}}" 
+        cutterdiameter="{{cutterDiameter}}" 
+        cutterheight="{{cutterHeight}}"
+        time1="{{time1}}"
+        time2="{{time2}}"
+        maxtimeRounded="{{maxTime}}"
+        >
+    </jscut-simulate-gcode>
+
+    <!-- Controls with parameters bound to simulator -->
+    <br><paper-slider pin editable value="{{time1}}" immediatevalue="{{time2}}" max="{{maxTime}}" step="0.1" id="paper_slider"></paper-slider>
+    <br><input type="number" value="{{cutterDiameter}}">
+    <br><input type="number" value="{{cutterHeight}}">
+    <br><textarea value="{{gcode}}" rows="20" cols="60"></textarea>
+</template>

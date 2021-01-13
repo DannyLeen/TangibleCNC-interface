@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Open blocks simulator",
+            "file": "/Users/Danny/Dropbox/Luca school of arts/Onderzoek/PHD/Maak_Machines/Interface/P5/Blocks Simulator/Index.html"
+        },
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Open design simulator",
+            "file": "/Users/Danny/Dropbox/Luca school of arts/Onderzoek/PHD/Maak_Machines/Interface/P5/Design Simulator/Index.html"
+        }
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Open JsCut simulator",
+            "file": "/Users/Danny/Dropbox/Luca school of arts/Onderzoek/PHD/Maak_Machines/Interface/P5/Design Simulator/JsCut.html"
+        }
+    ]
+    ]
+}

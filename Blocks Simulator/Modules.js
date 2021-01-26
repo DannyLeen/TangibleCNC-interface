@@ -29,7 +29,7 @@ class Modules{
         let moduleObj = new Module(uid, name,position, this.size, data); 
         this.database.setPosInFirebase(moduleObj);
         this.addToModules(moduleObj);
-        this.display();
+        
     }
 
     resetPosition(name){
@@ -50,9 +50,7 @@ class Modules{
         this.updateBackground();
         let len = this.modules.length;
         for (let i = 0; i < len; i++) {
-          
           this.modules[i].display();
-          
         }
         
     }
@@ -103,99 +101,81 @@ class Modules{
             this.executeComplete = true;
         }
         this.findConnectedModules();
-        this.display();
     }
-
 
     
     findConnectedModules(){
-        let len = this.modules.length;
-        let startPos = this.findStartModule();
-        let offset = this.size.x;
-        let counter = 0;
-        let modulesOrderByName = [];
-        let consecutive = []; 
-      //  console.clear();
-        for (let i = 0; i < len; i++) {
-            
-            if (startPos.y == this.modules[i].position.y){
-               let data = {
-                   arrayIndex: i,
-                   data: this.modules[i]
-               }
-                consecutive.push(data);
-            }
-
+        this.modules.sort(this.sortByPosition);
+        for(let module in this.modules){
+            this.database.setPosInFirebase(this.modules[module]);
         }
-        let sortedArray = this.findConsecutive(consecutive);
-
-       
-
-        if(sortedArray != undefined){
-            let lenOrder = sortedArray.length;
-            
-            for (let j = 0; j < lenOrder; j++){
-               // console.log(j + " " + sortedArray[j].data.name);   
-
-                let data = {
-                    id: sortedArray[j].data.uid,
-                    name: sortedArray[j].data.name
-                }
-                
-                for(let module in this.modules){
-                    if(this.modules[module].uid == sortedArray[j].data.uid){
-                        this.modules.splice(module, 1);
-                       // console.log("remove" + sortedArray[j].data.name);
-                    }
-
-                }
-              //  console.log('push ' + sortedArray[j].data.name);
-                this.modules.push(sortedArray[j].data);
-               // console.log(this.modules[sortedArray[j].arrayIndex].name)
-               //
-              //  this.modules.push();*/
-                modulesOrderByName.push(data);
-            }
-            this.database.sendToFirbase(modulesOrderByName);
-        }
+        this.findModulePosition();
+        this.display();
     }
 
-    findConsecutive(numbers){
-        numbers.sort(function(a, b){return a.data.position.x-b.data.position.x});
-        let chunks = [];
-        let prev = 0;
-        numbers.forEach((current) => {
-        if ( current.data.position.x - prev != 100 ) chunks.push([]);
-        if(chunks.length == 0){
-            chunks[chunks.length].push(current);
-        }
-        else{
-            chunks[chunks.length - 1].push(current);
-        }
-           
-            prev = current.data.position.x;
-        });
+    sortByPosition(a, b){
+        if (a.position.y == b.position.y) return a.position.x - b.position.x;
+        return a.position.y - b.position.y || a.position.x - b.position.x;
+      }
 
-        chunks.sort((a, b) => b.length - a.length);
-        return chunks[0];
-    }
-    
-    calculateNext(prevPos, offset){
+  /*  calculateNext(prevPos, offset){
         prevPos -= offset;
         return prevPos
     }
-
-    findStartModule(){
+*/
+    findModulePosition(){
         let len = this.modules.length;
+        let tempInstructions = [];
+        let prev = 0;
+        let counter = 0;
+
         let startPos;
+        console.clear();
         for (let i = 0; i < len; i++) {
             if(this.modules[i].name == "Start"){
-                startPos = this.modules[i].position;
+                prev =  this.modules[i].position.x;
+                for (let j = 0; j < len; j++) {
+                    if(this.modules[j].position.y == this.modules[i].position.y && this.modules[j].position.x > this.modules[i].position.x)
+                    {   
+                        if(this.modules[j].position.x  - prev == 100){
+                            let data = {
+                                id: this.modules[j].uid,
+                                name: this.modules[j].name
+                                }
+                            tempInstructions.push(data);
+                        }
+                        else{
+                            break;
+                        }
+                        prev = this.modules[j].position.x;
+                        
+                    }
+                }
             }
+            this.database.sendToFirbase(tempInstructions);
         }
-        return startPos;
-      
     }
+
+
+findConsecutive(numbers){
+
+let chunks = [];
+let prev = 0;
+numbers.forEach((current) => {
+if ( current.data.position.x - prev != 100 ) chunks.push([]);
+if(chunks.length == 0){
+chunks[chunks.length].push(current);
+}
+else{
+chunks[chunks.length - 1].push(current);
+}
+prev = current.data.position.x;
+});
+
+chunks.sort((a, b) => b.length - a.length);
+return chunks[0];
+}
+
     updateBackground(){
         this.background.createGrid();
     }

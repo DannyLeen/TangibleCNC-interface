@@ -34,7 +34,7 @@ class Database{
 }
 
 async databaseData(keys, data){
-
+    let zindex = 0;
     for (let i = 0; i < keys.length; i++) {
         let name = keys[i];
         let elements = Object.keys(data[name]);
@@ -48,18 +48,17 @@ async databaseData(keys, data){
                 let  posY = posData.val().PositionY;
                 let position = createVector(posX, posY);
                 modules.createModule(uid, name, position, data[name]);
+                zindex++;
 
             });
         }
      }
-     //this.findConnectedModules();
-     //
-   //  
+     modules.findConnectedModules();
 }
 
  sendToFirbase(objectArray){
     var ref = this.db.ref('Maak-Machines/Block-Simulator/Instructions');
-      ref.set(objectArray);
+    ref.set(objectArray);
 }
 
 setPosInFirebase(module){

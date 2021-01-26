@@ -12,7 +12,7 @@ class Modules{
         this.executeComplete = true;
         this.startPosition = createVector(500,300);
         this.background = new Background();
-        
+        this.database = new Database();
     }
     clear(){
         this.modules = [];
@@ -27,8 +27,9 @@ class Modules{
     createModule(uid, name,position, data){
      
         let moduleObj = new Module(uid, name,position, this.size, data); 
-        this.setPosInFirebase(moduleObj);
+        this.database.setPosInFirebase(moduleObj);
         this.addToModules(moduleObj);
+        this.display();
     }
 
     resetPosition(name){
@@ -44,45 +45,6 @@ class Modules{
         return position 
     }
 
-    async databaseData(keys, data){
-
-        for (let i = 0; i < keys.length; i++) {
-            let name = keys[i];
-            //console.log(name);
-            let elements = Object.keys(data[name]);
-           /* for (let j = 0; j < size; j++) {
-                Object.keys(data[id]);
-            }*/
-           // console.log(data[id]);
-           for (let element in elements) {
-               let uid = elements[element];
-               //console.log(uid);
-                //console.log(data[name][uid]);
-                var ref = db.ref('Maak-Machines/Block-Simulator/Position/' + name + '/' + uid);
-                await ref.once('value', posData => {
-                    let posX = posData.val().PositionX;
-                    let  posY = posData.val().PositionY;
-                   // console.log(posData);
-                    let position = createVector(posX, posY);
-                    //let position = this.createPosition(name);
-                    this.createModule(uid, name, position, data[name]);
-                   
-                  //  console.log("create: " + name);
-                });
- 
-            }
-       
-           // var dataVal = data.val();
-            //var keys = Object.keys(dataVal);
-        /*    for (let j = 0; j < data.length; j++) {
-            let name = keys[j];
-            let position = this.createPosition(name);
-            this.createModule(name, position,data)*/
-         }
-         this.findConnectedModules();
-         this.display();
-       //  
-    }
 
     display(){
         this.updateBackground();
@@ -135,7 +97,7 @@ class Modules{
             this.modules[id].setBorderColor(color(0));
             this.modules[id].position.x = int((this.modules[id].position.x +(this.size.x/2) ) /this.size.x)*this.size.x;
             this.modules[id].position.y = int((this.modules[id].position.y +(this.size.y/2) )/this.size.y)*this.size.y;
-            this.setPosInFirebase(this.modules[id]);
+            this.database.setPosInFirebase(this.modules[id]);
            
             this.moveId = -1;
             this.executeComplete = true;
@@ -144,15 +106,7 @@ class Modules{
         this.display();
     }
 
-    setPosInFirebase(module){
-        var ref = db.ref('Maak-Machines/Block-Simulator/Position/' + module.name + '/' + module.uid);
-        let data = {
-            PositionX: module.position.x,
-            PositionY: module.position.y
-        }
-        ref.set(data);
-        
-    }
+
     
     findConnectedModules(){
         let len = this.modules.length;
@@ -202,7 +156,7 @@ class Modules{
               //  this.modules.push();*/
                 modulesOrderByName.push(data);
             }
-            sendToFirbase(modulesOrderByName);
+            this.database.sendToFirbase(modulesOrderByName);
         }
     }
 

@@ -1,6 +1,10 @@
-
-function initDatabase(){
-        var firebaseConfig = {
+class Database{
+    constructor() {
+        this.initDatabase();
+        this.db;
+    }
+ initDatabase(){
+        let firebaseConfig = {
             apiKey: "AIzaSyA44aV3SXeV_6SwYFLuy3FEetYjly2E6co",
             authDomain: "m5stack-8f1cb.firebaseapp.com",
             databaseURL: "https://m5stack-8f1cb.firebaseio.com",
@@ -12,26 +16,60 @@ function initDatabase(){
             };
             // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        db = firebase.database();
-        var ref = db.ref('Maak-Machines/Modules');
-        ref.on('value', gotData, errData);
+        this.db = firebase.database();
+        let ref = this.db.ref('Maak-Machines/Modules');
+        ref.on('value', this.gotData, this.errData);
     }
     
-function gotData (data) {
-        var data = data.val();
-        var keys = Object.keys(data);
+ gotData (data) {
+        let dataVal = data.val();
+        let keys = Object.keys(dataVal);
         modules.clear();
-        modules.databaseData(keys, data);
+        modules.database.databaseData(keys, dataVal);
     }
 
-function errData(err) {
+ errData(err) {
     console.log('Error!');
     console.log(err);
 }
 
-function sendToFirbase(objectArray){
-    var ref = db.ref('Maak-Machines/Block-Simulator/Instructions');
+async databaseData(keys, data){
+
+    for (let i = 0; i < keys.length; i++) {
+        let name = keys[i];
+        let elements = Object.keys(data[name]);
+
+       for (let element in elements) {
+           let uid = elements[element];
+
+            var ref = this.db.ref('Maak-Machines/Block-Simulator/Position/' + name + '/' + uid);
+            await ref.once('value', posData => {
+                let posX = posData.val().PositionX;
+                let  posY = posData.val().PositionY;
+                let position = createVector(posX, posY);
+                modules.createModule(uid, name, position, data[name]);
+
+            });
+        }
+     }
+     //this.findConnectedModules();
+     //
+   //  
+}
+
+ sendToFirbase(objectArray){
+    var ref = this.db.ref('Maak-Machines/Block-Simulator/Instructions');
       ref.set(objectArray);
+}
+
+setPosInFirebase(module){
+    var ref = this.db.ref('Maak-Machines/Block-Simulator/Position/' + module.name + '/' + module.uid);
+    let data = {
+        PositionX: module.position.x,
+        PositionY: module.position.y
+    }
+    ref.set(data);
+    
 }
 
 /*function clearInstructions(){
@@ -39,3 +77,4 @@ function sendToFirbase(objectArray){
     ref.set(['Start']);
 }*/
 
+}

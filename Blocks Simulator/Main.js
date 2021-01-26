@@ -1,14 +1,9 @@
 let modules;
-let db;
 
 function setup() {
 
   createCanvas(windowWidth, windowHeight);
-  
-  // init modules
   modules = new Modules();
-  // init Firebase
-  initDatabase();
 
 }
 

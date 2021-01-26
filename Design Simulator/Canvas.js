@@ -8,6 +8,10 @@ class Canvas {
         this.cam = new Cam();
         this.instructions;
         this.blocks;
+        this.svg = document.querySelector('svg');
+        this.outer1; 
+        this.outer2; 
+        this.geomData = [];
     }
 
     setDataInstructions(data) {
@@ -20,8 +24,7 @@ class Canvas {
     }
 
     parseData(){
-        var svg = document.querySelector('svg');
-        jscut.svg.clear(svg);
+        jscut.svg.clear( this.svg );
         var refTemp = db.ref('Maak-Machines/Design-Simulator/');
         refTemp.child('SVG').remove();
         let data = [];
@@ -48,21 +51,26 @@ class Canvas {
     }
 
     drawMachineBed(size) {
-        var r2 = jscut.geometry.createRect(-250, -250, size.val().Width +250, size.val().Height +250, 'mm');
-        this.addToSvg({
+        this.outer1 = jscut.geometry.createRect(-250, -250, size.val().Width +250, size.val().Height +250, 'mm');
+       /* this.addToSvg({
             fill: 'LightGray',
             stroke: '#000000',
             'stroke-width': '1'
-        }, r2);
-        var r1 = jscut.geometry.createRect(0, 0, size.val().Width, size.val().Height, 'mm');
-        this.addToSvg({
+        },  this.outer1);*/
+        this.outer2 = jscut.geometry.createRect(0, 0, size.val().Width, size.val().Height, 'mm');
+        
+        /*this.addToSvg({
             fill: 'White',
             stroke: '#000000',
             'stroke-width': '20'
-        }, r1);
-
+        },  this.outer2);
+*/
     }
-
+    clearSVG(){
+        jscut.svg.clear(this.svg);
+        jscut.svg.addGeometryToSvg( this.svg ,this.outer1 , 90, {fill: 'LightGray', stroke: '#000000', 'stroke-width': '1'});
+        jscut.svg.addGeometryToSvg( this.svg , this.outer2 , 90, {fill: 'White',stroke: '#000000','stroke-width': '10'});
+    }
     displayList() {
      /*   if (drawList.itemList.length >= 1) {
             let paths = drawList.unionAll();
@@ -87,7 +95,7 @@ class Canvas {
       let camOperationData = {}
       let paths = {};
 
-      console.clear();
+      this.clearSVG();
 
       for(let activeBlock in activeBlocks){
         for (let blockDataId in activeBlocks[activeBlock]){
@@ -116,14 +124,12 @@ class Canvas {
                 if(tempData == "operation"){
                     //console.log(blockData.Instruction.data);
                     camOperationData = blockData.Instruction.data;
-    
-                    if(paths.length >0){
-                        let camPaths = this.cam.generateCamPath(paths,camOperationData);
+                    if(this.geomData.length >0){
+                        let camPaths = this.cam.generateCamPath(this.geomData,camOperationData);
                     }
                     else{
                         console.log("no paths to cam");
                     }
-                    
                 }
                 if(tempData == "geometry"){
                     let attr = {
@@ -137,13 +143,20 @@ class Canvas {
                     for(let ax = 0;  ax < rectPatternAmount.x; ax++){
                         let offsetX =  ax * rectPatternSpacing.x;
                         for(let ay = 0;  ay < rectPatternAmount.y; ay++){
-                        let offsetY =  ay * rectPatternSpacing.y;
+                        let offsetY =  ay* rectPatternSpacing.y;
                         let result = jscut.geometry.grow(blockData.Instruction.data.geometry, offset, 'mm', 'square');
                         paths = jscut.geometry.translate(result, startPoint.x + move.x + offsetX, startPoint.y + move.y + offsetY, 'mm');
+                        this.geomData.push(paths);
                         this.addToSvg(attr, paths);
-                      //  gcode = this.cam.generateGcode(camPaths);
+                        
+                        }
+
                     }
-                  }
+
+                   // paths = {};
+                      //  gcode = this.cam.generateGcode(camPaths);
+                    //
+                  
               
                  // let gcodeElement = document.getElementById("gcode");
                  // let text = document.createTextNode(gcode);
@@ -155,7 +168,7 @@ class Canvas {
 }
 
     addToSvg(attrs, geometry) {
-        var svg = document.querySelector('svg');
-        jscut.svg.addGeometryToSvg(svg, geometry, 90, attrs);
+    
+        jscut.svg.addGeometryToSvg( this.svg , geometry, 90, attrs);
     }
 }

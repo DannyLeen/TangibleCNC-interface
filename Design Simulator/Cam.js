@@ -22,10 +22,10 @@ class Cam {
         this.operation.camOp = camOperationData.operation;
         this.operation.units = this.material.units;
         this.operation.cutDepth = camOperationData.depth;
-        this.operation.geometries = [camPaths];
-
-        var camPaths = jscut.cam.getCamPaths(this.operation, this.tool);
-        jscut.svg.addCamPathsToSvg(svg, camPaths, 90, { fill: 'none', stroke: 'green', 'stroke-width': '10'} );
+        this.operation.geometries = camPaths;
+    
+        var camPathOp = jscut.cam.getCamPaths(this.operation, this.tool);
+        jscut.svg.addCamPathsToSvg(svg, camPathOp, 90, { fill: 'none', stroke: 'green', 'stroke-width': '10'} );
         
         return camPaths;
     }

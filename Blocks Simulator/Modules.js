@@ -1,6 +1,6 @@
 class Modules{
-    constructor(size) {
-        this.size = size;
+    constructor() {
+        this.size =  new createVector(100,100);;
         this.spacing = 10;
         this.posX = 100;
         this.posY = 100; 
@@ -11,13 +11,14 @@ class Modules{
         this.modules = modulesArray;
         this.executeComplete = true;
         this.startPosition = createVector(500,300);
-        
+        this.background = new Background();
         
     }
     clear(){
         this.modules = [];
         this.posY = 100;
     }
+
 
     addToModules(moduleObj){
         append(this.modules, moduleObj);
@@ -79,15 +80,19 @@ class Modules{
             this.createModule(name, position,data)*/
          }
          this.findConnectedModules();
+         this.display();
        //  
     }
 
     display(){
+        this.updateBackground();
         let len = this.modules.length;
         for (let i = 0; i < len; i++) {
-       
+          
           this.modules[i].display();
+          
         }
+        
     }
 
     mousePressed(){
@@ -109,6 +114,7 @@ class Modules{
                 }
             }
         }
+        this.display();
     }
 
     mouseDragged(){
@@ -119,6 +125,7 @@ class Modules{
             this.modules[id].setBorderColor(color(235, 204, 0));
             this.hitModule = false;
         }
+        this.display();
     }
 
     mouseReleased(){
@@ -134,6 +141,7 @@ class Modules{
             this.executeComplete = true;
         }
         this.findConnectedModules();
+        this.display();
     }
 
     setPosInFirebase(module){
@@ -143,6 +151,7 @@ class Modules{
             PositionY: module.position.y
         }
         ref.set(data);
+        
     }
     
     findConnectedModules(){
@@ -193,7 +202,7 @@ class Modules{
               //  this.modules.push();*/
                 modulesOrderByName.push(data);
             }
-            this.sendToFirbase(modulesOrderByName);
+            sendToFirbase(modulesOrderByName);
         }
     }
 
@@ -217,16 +226,6 @@ class Modules{
         return chunks[0];
     }
     
-    clearInstructions(){
-        var ref = db.ref('Maak-Machines/Block-Simulator/Instructions');
-        ref.set(['Start']);
-    }
-
-    sendToFirbase(objectArray){
-        var ref = db.ref('Maak-Machines/Block-Simulator/Instructions');
-  	    ref.set(objectArray);
-    }
-
     calculateNext(prevPos, offset){
         prevPos -= offset;
         return prevPos
@@ -243,5 +242,9 @@ class Modules{
         return startPos;
       
     }
+    updateBackground(){
+        this.background.createGrid();
+    }
+    
 }
 

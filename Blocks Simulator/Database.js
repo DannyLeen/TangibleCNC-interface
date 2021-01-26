@@ -29,4 +29,13 @@ function errData(err) {
     console.log(err);
 }
 
+function sendToFirbase(objectArray){
+    var ref = db.ref('Maak-Machines/Block-Simulator/Instructions');
+      ref.set(objectArray);
+}
+
+/*function clearInstructions(){
+    var ref = db.ref('Maak-Machines/Block-Simulator/Instructions');
+    ref.set(['Start']);
+}*/
 

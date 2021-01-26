@@ -12,27 +12,40 @@ class Cam {
         };
         this.operation = {
             camOp: "None",
+            combineOp: "Union"
         };
-        this.gcodeOptions = {units: 'mm'};
+        this.gcodeOptions = {
+            units: 'mm'
+        };
         this.gcode;
     }
 
-    generateCamPath(camPaths, camOperationData){
+    generateCamPath(camPaths, camOperationData) {
         var svg = document.querySelector('svg');
         this.operation.camOp = camOperationData.operation;
         this.operation.units = this.material.units;
         this.operation.cutDepth = camOperationData.depth;
         this.operation.geometries = camPaths;
-    
+
         var camPathOp = jscut.cam.getCamPaths(this.operation, this.tool);
-        jscut.svg.addCamPathsToSvg(svg, camPathOp, 90, { fill: 'none', stroke: 'green', 'stroke-width': '10'} );
+       // let tcamPathOp = jscut.cam.toSvgPathData(camPathOp, 90);
+
+       // var camPathOp = jscut.Cam.generateCamPath(camPaths,this.operation);
+      //  console.log(camPathOp[0].path);
         
-        return camPaths;
+
+        jscut.svg.addCamPathsToSvg(svg, camPathOp, 90, {
+            fill: 'none',
+            stroke: 'green',
+            'stroke-width': '10'
+        });
+
+        return camPathOp;
     }
-    generateHeader(){
+    generateHeader() {
         this.gcode = jscut.cam.getGcodeHeader(this.tool, this.material, this.gcodeOptions);
     }
-    generateGcode(camPaths){
+    generateGcode(camPaths) {
         this.gcode += jscut.cam.getOperationGcode(0, this.operation, this.tool, this.material, this.gcodeOptions, camPaths);
         return this.gcode;
     }

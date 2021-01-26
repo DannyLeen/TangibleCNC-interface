@@ -24,7 +24,7 @@ jscut.cam = jscut.cam || {};
     // Get combined geometry for operation. This uses operation.combineOp to combine multiple geometries in operation.geometries.
     jscut.cam.getCombinedGeometry = function (operation) {
         operation = jscut.data.cleanOperation(operation);
-
+        
         var combineFn;
         if (operation.combineOp == 'Union')
             combineFn = jscut.geometry.union;
@@ -45,6 +45,7 @@ jscut.cam = jscut.cam || {};
         var result = operation.geometries[0];
         for (var i = 1; i < operation.geometries.length; ++i)
             result = combineFn(result, operation.geometries[i]);
+     
         return result;
     }
 

@@ -69,6 +69,7 @@ class Canvas {
     }
     clearSVG() {
         this.gcodeElement.innerHTML = "";
+        this.geomData = [];
         jscut.svg.clear(this.svg);
         jscut.svg.addGeometryToSvg(this.svg, this.outer1, 90, {
             fill: 'LightGray',

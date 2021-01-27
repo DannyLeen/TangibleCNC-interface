@@ -25,5 +25,5 @@ function mouseReleased() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  modules.updateBackground();
+  modules.display();
 }
